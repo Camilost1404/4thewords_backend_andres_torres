@@ -1,7 +1,9 @@
-from src.core.db.db import database
+from datetime import datetime
+
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Date
 from sqlalchemy.orm import relationship
-from datetime import datetime
+
+from src.core.db.db import database
 
 Base = database.get_base()
 
@@ -10,6 +12,7 @@ class Category(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(255), nullable=False, index=True)
+    legends = relationship("Legend", back_populates="category")
     
     def __repr__(self):
         return f"<Category {self.name}>"
@@ -37,7 +40,7 @@ class Canton(Base):
     name = Column(String(255), nullable=False, index=True)
     province_id = Column(ForeignKey("provincias.id"))
     province = relationship("Province", back_populates="cantones")
-    ditricts = relationship("District", back_populates="canton")
+    districts = relationship("District", back_populates="canton")
     
     def __repr__(self):
         return f"<Canton {self.name}>"
@@ -52,6 +55,7 @@ class District(Base):
     name = Column(String(255), nullable=False, index=True)
     canton_id = Column(ForeignKey("cantones.id"))
     canton = relationship("Canton", back_populates="districts")
+    legends = relationship("Legend", back_populates="district")
     
     def __repr__(self):
         return f"<District {self.name}>"
