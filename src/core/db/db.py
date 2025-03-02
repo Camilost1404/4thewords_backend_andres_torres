@@ -16,7 +16,7 @@ class Database:
         except Exception as e:
             print(f"Connection error: {e}")
         finally:
-            self.engine.dispose
+            self.engine.dispose()
 
     def get_base(self):
         return self.Base

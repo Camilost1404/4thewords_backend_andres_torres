@@ -9,6 +9,6 @@ class LegendService:
         legends = self.repository.get_all()
         return legends
     
-    async def create_legend(self, legend: dict):
+    def create_legend(self, legend: dict):
         data = Legend(**legend)
-        return await self.repository.insert(data)
+        return self.repository.insert(data)

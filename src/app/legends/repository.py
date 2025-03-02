@@ -13,8 +13,6 @@ class LegendRepository:
                 return session.query(Legend).all()
             except Exception as e:
                 raise e
-            finally:
-                session.close()
 
     def insert(self, legend: Legend):
         with self.db.get_session() as session:
