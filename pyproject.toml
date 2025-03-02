@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "Virtual Books API"
+version = "0.1.0"
+description = "API to manage virtual books"
+authors = ["Andrés Torres <camitorres1404@gmail.com>"]
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.11"
+uvicorn = {extras = ["standard"], version = "^0.34.0"}
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
