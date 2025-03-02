@@ -10,6 +10,10 @@ package-mode = false
 python = "^3.12"
 fastapi = "^0.115.11"
 uvicorn = {extras = ["standard"], version = "^0.34.0"}
+pydantic-settings = "^2.8.1"
+sqlalchemy = "^2.0.38"
+alembic = "^1.14.1"
+mysqlclient = "^2.2.7"
 
 [build-system]
 requires = ["poetry-core"]
