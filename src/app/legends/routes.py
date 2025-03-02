@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 
 from src.app.legends.services import LegendService
-from src.app.legends.schemas import LegendCreate
+from src.app.legends.schemas import LegendCreate, LegendsListResponse
 
 class LegendRoutes:
     def __init__(self, service: LegendService):
@@ -19,6 +19,18 @@ class LegendRoutes:
     def _register_routes(self):
         """Register routes."""
         self.router.add_api_route("/", self.create_legend, methods=["POST"])
+        self.router.add_api_route("/", self.get_legends, methods=["GET"])
+        
+    def get_legends(self):
+        """Endpoint to get all legends."""
+        try:
+            legends = self.service.get_legends()
+            return LegendsListResponse.parse_obj(legends)
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(e),
+            )
     
     async def create_legend(self, request: LegendCreate):
         """Endpoint to create a new legend."""

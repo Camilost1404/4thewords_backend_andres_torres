@@ -5,6 +5,10 @@ class LegendService:
     def __init__(self, repository: LegendRepository):
         self.repository = repository
     
+    def get_legends(self):
+        legends = self.repository.get_all()
+        return legends
+    
     async def create_legend(self, legend: dict):
         data = Legend(**legend)
         return await self.repository.insert(data)
