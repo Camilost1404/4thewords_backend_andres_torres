@@ -25,10 +25,3 @@ class Database:
         return self.Session()
 
 database = Database(settings.database_url)
-
-def get_db():
-    db = database.get_session()
-    try:
-        yield db
-    finally:
-        db.close()
