@@ -74,6 +74,7 @@ class Legend(Base):
     date = Column(Date, nullable=False)
     district_id = Column(ForeignKey("distritos.id"))
     district = relationship("District", back_populates="legends")
+    image = Column(String(255), nullable=True)
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
     

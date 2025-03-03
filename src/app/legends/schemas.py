@@ -1,6 +1,7 @@
 from typing import Optional
 from datetime import date, datetime
 
+from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, AliasGenerator, field_validator, RootModel
 from pydantic.alias_generators import to_camel, to_snake
 
@@ -30,6 +31,7 @@ class LegendCreate(BaseModel):
     category_id: int
     district_id: int
     date: date
+    image: str
     
     model_config = ConfigDict(
         title = "Legend Create",
@@ -42,14 +44,14 @@ class LegendCreate(BaseModel):
     @field_validator("title")
     def validate_title(cls, value):
         if not value or not value.strip():
-            raise ValueError("Title is required")
+            raise HTTPException(status_code=400, detail="Title is required")
         
         return value
     
     @field_validator("description")
     def validate_description(cls, value):
         if not value or not value.strip():
-            raise ValueError("Description is required")
+            raise HTTPException(status_code=400, detail="Description is required")
         
         return value
 
@@ -60,6 +62,7 @@ class LegendResponse(BaseModel):
     category: CategoryResponse
     district: DistrictResponse
     date: date
+    image: str
     created_at: datetime
 
     model_config = ConfigDict(
@@ -91,11 +94,11 @@ class LegendUpdate(BaseModel):
     @field_validator("title", mode="before")
     def validate_title(cls, value):
         if value is not None and not value.strip():
-            raise ValueError("Title cannot be empty")
+            raise HTTPException(status_code=400, detail="Title cannot be empty")
         return value.capitalize() if value else None
 
     @field_validator("description", mode="before")
     def validate_description(cls, value):
         if value is not None and not value.strip():
-            raise ValueError("Description cannot be empty")
+            raise HTTPException(status_code=400, detail="Description cannot be empty")
         return value if value else None

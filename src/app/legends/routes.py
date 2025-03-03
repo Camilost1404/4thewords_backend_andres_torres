@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
-
+import os
+from datetime import datetime, date
+from fastapi import APIRouter, HTTPException, status, Form, UploadFile, File
+from src.core.settings.config import settings
 from src.app.legends.services import LegendService
 from src.app.legends.schemas import LegendCreate, LegendsListResponse, LegendResponse, LegendUpdate
 
@@ -43,10 +45,27 @@ class LegendRoutes:
                 detail=str(e),
             )
         
-    def create_legend(self, request: LegendCreate):
+    async def create_legend(self, title: str = Form(...), description: str = Form(...), category_id: int = Form(...), district_id: int = Form(...), date: date = Form(...), image: UploadFile = File(...)):
         """Endpoint to create a new legend."""
         try:
-            data = request.model_dump()
+            if not image.content_type.startswith("image/"):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Invalid file type. Only images are allowed",
+                )
+            
+            timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+            file_name = f"{timestamp}_{image.filename}"
+            file_path = os.path.join(settings.UPLOAD_FOLDER, file_name)
+            
+            with open(file_path, "wb") as buffer:
+                buffer.write(await image.read())
+            
+            image_url = f"{settings.IMAGE_URL}/{settings.UPLOAD_FOLDER}/{file_name}"
+            
+            schema = LegendCreate(title=title, description=description, category_id=category_id, district_id=district_id, date=date, image=image_url)
+            
+            data = schema.model_dump()
             legend = self.service.create_legend(data)
             return legend
 
