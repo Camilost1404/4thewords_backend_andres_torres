@@ -12,3 +12,6 @@ class LegendService:
     def create_legend(self, legend: dict):
         data = Legend(**legend)
         return self.repository.insert(data)
+    
+    def update_legend(self, legend_id: int, legend: dict):
+        return self.repository.update(legend_id, legend)

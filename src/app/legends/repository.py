@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
+from fastapi import HTTPException, status
 
-from src.app.legends.models import Legend
+from src.app.legends.models import Legend, District, Canton, Category
 from src.core.db.db import Database
 
 class LegendRepository:
@@ -10,19 +11,65 @@ class LegendRepository:
     def get_all(self):
         with self.db.get_session() as session:
             try:
-                return session.query(Legend).all()
+                legends = session.query(Legend).options(
+                    joinedload(Legend.category),
+                    joinedload(Legend.district).joinedload(District.canton).joinedload(Canton.province)
+                ).all()
+                return legends
             except Exception as e:
                 raise e
 
     def insert(self, legend: Legend):
         with self.db.get_session() as session:
             try:
+                category_exists = session.query(Category.id).filter(Category.id == legend.category_id).first()
+                if not category_exists:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"Category with id {legend.category_id} does not exist."
+                    )
+                
+                district_exists = session.query(District.id).filter(District.id == legend.district_id).first()
+                if not district_exists:
+                    raise HTTPException(
+                        status_code=status.HTTP_404_NOT_FOUND,
+                        detail=f"District with id {legend.district_id} does not exist."
+                    )
+
+                legend.title = legend.title.strip().capitalize()
+                
                 session.add(legend)
                 session.commit()
                 session.refresh(legend)
+                
+                legend = session.query(Legend).options(
+                    joinedload(Legend.category),
+                    joinedload(Legend.district).joinedload(District.canton).joinedload(Canton.province)
+                ).filter(Legend.id == legend.id).first()
+                
                 return legend
             except Exception as e:
                 session.rollback()
                 raise e
-            finally:
-                session.close()
+    
+    def update(self, legend_id: int, update_data: dict):
+        with self.db.get_session() as session:
+            legend = (
+            session.query(Legend)
+            .options(joinedload(Legend.category), joinedload(Legend.district).joinedload(District.canton).joinedload(Canton.province))
+            .filter(Legend.id == legend_id)
+            .first()
+        )
+            
+            if not legend:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Legend with id {legend_id} not found",
+                )
+            
+            for key, value in update_data.items():
+                setattr(legend, key, value)
+
+            session.commit()
+            session.refresh(legend)
+            return legend
