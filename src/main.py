@@ -27,5 +27,5 @@ app.title = settings.app_name
 async def startup_event():
     database._check_connection()
 
-app.mount("/src/uploads", StaticFiles(directory=settings.UPLOAD_FOLDER), name="uploads")
+app.mount("/uploads", StaticFiles(directory=settings.UPLOAD_FOLDER), name="uploads")
 app.include_router(legend_router.get_router())

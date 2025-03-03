@@ -61,7 +61,7 @@ class LegendRoutes:
             with open(file_path, "wb") as buffer:
                 buffer.write(await image.read())
             
-            image_url = f"{settings.IMAGE_URL}/{settings.UPLOAD_FOLDER}/{file_name}"
+            image_url = f"{settings.IMAGE_URL}/uploads/{file_name}"
             
             schema = LegendCreate(title=title, description=description, category_id=category_id, district_id=district_id, date=date, image=image_url)
             

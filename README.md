@@ -18,13 +18,13 @@ Sigue estos pasos para configurar el proyecto en tu entorno:
 1. **Clonar el repositorio**
 
    ```bash
-   git clone <URL_DEL_REPOSITORIO>
+   git clone https://github.com/Camilost1404/4thewords_backend_andres_torres.git
    ```
 
 2. **Navegar al directorio del proyecto**
 
    ```bash
-   cd "D:/Proyectos Web/4TheWords Prueba/backend"
+   cd 4thewords_backend_andres_torres
    ```
 
 3. **Instalar las dependencias con Poetry**
@@ -66,7 +66,7 @@ Sigue estos pasos para configurar el proyecto en tu entorno:
 5. Inicia el servidor de desarrollo:
 
     ```bash
-    poetry run uvicorn main:app --reload
+    uvicorn src.main:app --reload
     ```
 
 6. Accede a la API en `http://localhost:8000`.
