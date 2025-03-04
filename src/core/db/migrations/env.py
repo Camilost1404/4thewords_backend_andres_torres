@@ -7,7 +7,7 @@ from alembic import context
 
 from src.core.db.db import database
 from src.core.settings.config import settings
-from src.app.legends.models import Category
+from src.app.legends.models import *
 
 Base = database.get_base()
 
