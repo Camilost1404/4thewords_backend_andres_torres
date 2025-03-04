@@ -16,6 +16,9 @@ class LegendService:
 
     def update_legend(self, legend_id: int, legend: dict):
         return self.repository.update(legend_id, legend)
+    
+    def delete_legend(self, legend_id: int):
+        return self.repository.delete(legend_id)
 
 
 class CategoryService:

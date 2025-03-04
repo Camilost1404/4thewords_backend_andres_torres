@@ -92,6 +92,20 @@ class LegendRepository:
             session.commit()
             session.refresh(legend)
             return legend
+    
+    def delete(self, legend_id: int):
+        with self.db.get_session() as session:
+            legend = session.query(Legend).filter(Legend.id == legend_id).first()
+
+            if not legend:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Legend with id {legend_id} not found",
+                )
+
+            session.delete(legend)
+            session.commit()
+            return legend
 
 
 class CategoryRepository:

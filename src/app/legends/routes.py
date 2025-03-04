@@ -27,6 +27,8 @@ class LegendRoutes:
             "/", self.get_legends, methods=["GET"], response_model=LegendsListResponse)
         self.router.add_api_route(
             "/{legend_id}", self.update_legend, methods=["PATCH"], response_model=LegendResponse)
+        self.router.add_api_route(
+            "/{legend_id}", self.delete_legend, methods=["DELETE"], status_code=status.HTTP_200_OK)
 
     def get_legends(self, title: str = Query(None, description="Text to search legends"), category: int = Query(None, description="Category ID")):
         """Endpoint to get all legends."""
@@ -102,6 +104,21 @@ class LegendRoutes:
             updated_legend = self.service.update_legend(legend_id, data)
 
             return updated_legend
+
+        except HTTPException as http_ex:
+            raise http_ex
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(e),
+            )
+    
+    def delete_legend(self, legend_id: int):
+        """Endpoint to delete a legend."""
+        try:
+            self.service.delete_legend(legend_id)
+            return {"message": "Legend deleted successfully"}
 
         except HTTPException as http_ex:
             raise http_ex
