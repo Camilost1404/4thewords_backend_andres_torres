@@ -1,5 +1,5 @@
 from typing import Optional
-from datetime import date, datetime
+from datetime import date as dt, datetime
 
 from fastapi import HTTPException
 from pydantic import BaseModel, ConfigDict, AliasGenerator, field_validator, RootModel
@@ -7,6 +7,46 @@ from pydantic.alias_generators import to_camel, to_snake
 
 # Esquema para la creación de una leyenda (entrada)
 
+
+class CategoryInfo(BaseModel):
+    id: int
+    name: str
+
+
+class ProvinceInfo(BaseModel):
+    id: int
+    name: str
+
+
+class CantonInfo(BaseModel):
+    id: int
+    name: str
+    province: ProvinceInfo
+
+
+class DistrictInfo(BaseModel):
+    id: int
+    name: str
+    canton: CantonInfo
+
+
+class LegendResponse(BaseModel):
+    id: int
+    title: str
+    description: str
+    category: CategoryInfo
+    district: DistrictInfo
+    date: dt
+    image: str
+    created_at: datetime
+
+    model_config = ConfigDict(
+        title="Legend Response",
+        alias_generator=AliasGenerator(
+            validation_alias=to_snake,
+            serialization_alias=to_camel,
+        ),
+    )
 
 class CategoryResponse(BaseModel):
     id: int
@@ -20,36 +60,22 @@ class CategoryResponse(BaseModel):
         ),
     )
 
+class DistrictsInfo(BaseModel):
+    id: int
+    name: str
+
+class CantonsInfo(BaseModel):
+    id: int
+    name: str
+    districts: list[DistrictsInfo]
 
 class ProvinceResponse(BaseModel):
     id: int
     name: str
-
-
-class CantonResponse(BaseModel):
-    id: int
-    name: str
-    province: ProvinceResponse
-
-
-class DistrictResponse(BaseModel):
-    id: int
-    name: str
-    canton: CantonResponse
-
-
-class LegendResponse(BaseModel):
-    id: int
-    title: str
-    description: str
-    category: CategoryResponse
-    district: DistrictResponse
-    date: date
-    image: str
-    created_at: datetime
-
+    cantones: list[CantonsInfo]
+    
     model_config = ConfigDict(
-        title="Legend Response",
+        title="Province Response",
         alias_generator=AliasGenerator(
             validation_alias=to_snake,
             serialization_alias=to_camel,
@@ -64,7 +90,7 @@ class LegendCreate(BaseModel):
     description: str
     category_id: int
     district_id: int
-    date: date
+    date: dt
     image: str
 
     model_config = ConfigDict(
@@ -96,7 +122,10 @@ class LegendsListResponse(RootModel):
 
 
 class CategoryListResponse(RootModel):
-    root: list[CategoryResponse]
+    root: list[CategoryInfo]
+
+class ProvinceListResponse(RootModel):
+    root: list[ProvinceResponse]
 
 
 class LegendUpdate(BaseModel):
@@ -104,7 +133,8 @@ class LegendUpdate(BaseModel):
     description: Optional[str] = None
     category_id: Optional[int] = None
     district_id: Optional[int] = None
-    date: Optional[date] = None
+    date: dt | None = None
+    image: Optional[str] = None
 
     model_config = ConfigDict(
         title="Legend Update",

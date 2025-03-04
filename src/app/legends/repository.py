@@ -134,3 +134,17 @@ class CategoryRepository:
                 return categories
             except Exception as e:
                 raise e
+
+class ProvinceRepository:
+    def __init__(self, db: Database):
+        self.db = db
+
+    def get_all(self):
+        with self.db.get_session() as session:
+            try:
+                provinces = session.query(Province).options(
+                    joinedload(Province.cantones).joinedload(Canton.districts)
+                ).order_by(Province.name.asc()).all()
+                return provinces
+            except Exception as e:
+                raise e

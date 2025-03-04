@@ -1,4 +1,4 @@
-from src.app.legends.repository import LegendRepository, CategoryRepository
+from src.app.legends.repository import LegendRepository, CategoryRepository, ProvinceRepository
 from src.app.legends.models import Legend
 
 
@@ -30,5 +30,13 @@ class CategoryService:
         self.repository = repository
 
     def get_categories(self):
+        legends = self.repository.get_all()
+        return legends
+
+class ProvinceService:
+    def __init__(self, repository: ProvinceRepository):
+        self.repository = repository
+
+    def get_provinces(self):
         legends = self.repository.get_all()
         return legends
