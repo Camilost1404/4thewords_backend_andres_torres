@@ -10,7 +10,7 @@ class LegendRepository:
     def __init__(self, db: Database):
         self.db = db
 
-    def get_all(self, title: str = None):
+    def get_all(self, title: str = None, category: int = None):
         with self.db.get_session() as session:
             try:
                 query = session.query(Legend).options(
@@ -25,6 +25,9 @@ class LegendRepository:
                             Legend.title.ilike(f"%{title}%")
                         )
                     )
+
+                if category:
+                    query = query.filter(Legend.category_id == category)
 
                 legends = query.all()
 
@@ -98,7 +101,8 @@ class CategoryRepository:
     def get_all(self):
         with self.db.get_session() as session:
             try:
-                categories = session.query(Category).order_by(Category.name.asc()).all()
+                categories = session.query(Category).order_by(
+                    Category.name.asc()).all()
                 return categories
             except Exception as e:
                 raise e

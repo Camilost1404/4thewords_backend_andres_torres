@@ -28,10 +28,10 @@ class LegendRoutes:
         self.router.add_api_route(
             "/{legend_id}", self.update_legend, methods=["PATCH"], response_model=LegendResponse)
 
-    def get_legends(self, title: str = Query(None, description="Texto para buscar leyendas")):
+    def get_legends(self, title: str = Query(None, description="Text to search legends"), category: int = Query(None, description="Category ID")):
         """Endpoint to get all legends."""
         try:
-            legends = self.service.get_legends(title)
+            legends = self.service.get_legends(title, category)
             if not legends:
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
@@ -66,8 +66,14 @@ class LegendRoutes:
 
             image_url = f"{settings.IMAGE_URL}/uploads/{file_name}"
 
-            schema = LegendCreate(title=title, description=description, category_id=category_id,
-                                  district_id=district_id, date=date, image=image_url)
+            schema = LegendCreate(
+                title=title,
+                description=description,
+                category_id=category_id,
+                district_id=district_id,
+                date=date,
+                image=image_url
+            )
 
             data = schema.model_dump()
             legend = self.service.create_legend(data)
@@ -106,6 +112,7 @@ class LegendRoutes:
                 detail=str(e),
             )
 
+
 class CategoryRoutes:
     def __init__(self, service: CategoryService):
         self.service = service
@@ -119,7 +126,8 @@ class CategoryRoutes:
         return self.router
 
     def _register_routes(self):
-        self.router.add_api_route("/", self.get_categories, methods=["GET"], response_model=CategoryListResponse)
+        self.router.add_api_route(
+            "/", self.get_categories, methods=["GET"], response_model=CategoryListResponse)
 
     def get_categories(self):
         """Endpoint to get all categories."""

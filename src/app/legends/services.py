@@ -6,8 +6,8 @@ class LegendService:
     def __init__(self, repository: LegendRepository):
         self.repository = repository
 
-    def get_legends(self, title: str = None):
-        legends = self.repository.get_all(title)
+    def get_legends(self, title: str = None, category: int = None):
+        legends = self.repository.get_all(title, category)
         return legends
 
     def create_legend(self, legend: dict):
