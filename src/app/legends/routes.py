@@ -22,11 +22,13 @@ class LegendRoutes:
     def _register_routes(self):
         """Register routes."""
         self.router.add_api_route(
-            "/", self.create_legend, methods=["POST"], response_model=LegendResponse)
+            "/", self.create_legend, methods=["POST"], response_model=LegendResponse, status_code=status.HTTP_201_CREATED)
         self.router.add_api_route(
-            "/", self.get_legends, methods=["GET"], response_model=LegendsListResponse)
+            "/", self.get_legends, methods=["GET"], response_model=LegendsListResponse, status_code=status.HTTP_200_OK)
         self.router.add_api_route(
-            "/{legend_id}", self.update_legend, methods=["PATCH"], response_model=LegendResponse)
+            "/{legend_id}", self.get_legend, methods=["GET"], response_model=LegendResponse, status_code=status.HTTP_200_OK)
+        self.router.add_api_route(
+            "/{legend_id}", self.update_legend, methods=["PATCH"], response_model=LegendResponse, status_code=status.HTTP_200_OK)
         self.router.add_api_route(
             "/{legend_id}", self.delete_legend, methods=["DELETE"], status_code=status.HTTP_200_OK)
 
@@ -40,6 +42,21 @@ class LegendRoutes:
                     detail="No legends found",
                 )
             return legends
+
+        except HTTPException as http_ex:
+            raise http_ex
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=str(e),
+            )
+    
+    def get_legend(self, legend_id: int):
+        """Endpoint to get a legend."""
+        try:
+            legend = self.service.get_legend(legend_id)
+            return legend
 
         except HTTPException as http_ex:
             raise http_ex
@@ -144,7 +161,7 @@ class CategoryRoutes:
 
     def _register_routes(self):
         self.router.add_api_route(
-            "/", self.get_categories, methods=["GET"], response_model=CategoryListResponse)
+            "/", self.get_categories, methods=["GET"], response_model=CategoryListResponse, status_code=status.HTTP_200_OK)
 
     def get_categories(self):
         """Endpoint to get all categories."""

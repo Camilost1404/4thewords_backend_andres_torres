@@ -9,6 +9,10 @@ class LegendService:
     def get_legends(self, title: str = None, category: int = None):
         legends = self.repository.get_all(title, category)
         return legends
+    
+    def get_legend(self, legend_id: int):
+        legend = self.repository.get_by_id(legend_id)
+        return legend
 
     def create_legend(self, legend: dict):
         data = Legend(**legend)

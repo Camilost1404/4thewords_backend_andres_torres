@@ -34,6 +34,20 @@ class LegendRepository:
                 return legends
             except Exception as e:
                 raise e
+    
+    def get_by_id(self, legend_id: int):
+        with self.db.get_session() as session:
+            legend = session.query(Legend).options(
+                joinedload(Legend.category), joinedload(Legend.district).joinedload(District.canton).joinedload(Canton.province)
+            ).filter(Legend.id == legend_id).first()
+
+            if not legend:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Legend with id {legend_id} not found",
+                )
+
+            return legend
 
     def insert(self, legend: Legend):
         with self.db.get_session() as session:
